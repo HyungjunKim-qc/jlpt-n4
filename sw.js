@@ -1,5 +1,5 @@
 // JLPT N4 학습지도 서비스 워커 — 앱 파일은 네트워크 우선(업데이트 반영), 음성은 캐시 우선(오프라인)
-const VER = 'n4-app-0928a70b08';
+const VER = 'n4-app-ab086c5479';
 const AUDIO = 'n4-audio';
 const FONTS = 'n4-fonts';
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png", "./favicon.png", "./data/w01.js", "./data/w02.js", "./data/w03.js", "./data/w04.js", "./data/w05.js", "./data/w06.js", "./data/w07.js", "./data/w08.js", "./data/w09.js", "./data/w10.js", "./data/w11.js", "./data/w12.js"];

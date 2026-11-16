@@ -1,7 +1,7 @@
 {
  "name": "JLPT N4 학습지도",
  "short_name": "JLPT N4",
- "description": "하루 40분, 12주 JLPT N4 독학",
+ "description": "하루 50분, 12주 JLPT N4 독학",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",
