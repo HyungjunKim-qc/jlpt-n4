@@ -155,6 +155,7 @@ th{font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.04em}
 .yomi{font-family:var(--f-jp);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;gap:6px;font-size:15px;line-height:2.1}
 .yomi .label{font-family:var(--f-body);line-height:1.4}
 .yomi ol{margin:0;padding-left:22px;line-height:2.1}
+span.ko{display:block;font-family:var(--f-body);font-size:13px;color:var(--muted);line-height:1.55;margin:1px 0 4px}
 rt{font-size:.62em;color:var(--muted);font-family:var(--f-jp)}
 .script{line-height:2.1}
 .script .sp{color:var(--muted);font-size:12px;margin-right:6px;font-family:var(--f-body)}
@@ -202,7 +203,7 @@ rt{font-size:.62em;color:var(--muted);font-family:var(--f-jp)}
   <div class="routine">
     <div class="step"><span class="min">10분 · 단어</span><span>새 단어 15개 듣고 따라 읽기 + 1일·3일·1주 전 단어 복습</span></div>
     <div class="step"><span class="min">10분 · 설명</span><span>오늘의 문법 설명과 예문. 예문도 눌러서 들을 수 있어요</span></div>
-    <div class="step"><span class="min">25~30분 · 문제</span><span>실제 N4 유형 30문제. 누르면 바로 채점, 해설에는 후리가나</span></div>
+    <div class="step"><span class="min">25~30분 · 문제</span><span>실제 N4 유형 30문제. 누르면 바로 채점, 해설에는 후리가나와 번역</span></div>
     <div class="step"><span class="min">5분 · 마무리</span><span>섀도잉 문장 따라 말하기 + 틀린 문제 오답노트</span></div>
   </div>
   <p class="small muted">토요일은 그 주 단어 퀴즈 15문항 + 총복습 30문제, 일요일은 쉬는 날입니다.</p>
@@ -436,9 +437,11 @@ function renderDay(w,d,WD,refs){
       el.querySelectorAll(".choice").forEach((x,xi)=>{x.disabled=true;if(xi===q.a)x.classList.add("right")});if(!ok)b.classList.add("wrong");
       const fb=el.querySelector(".feedback");fb.hidden=false;fb.className="feedback "+(ok?"okf":"badf");
       let script="",yomi="";
-      if(q.listen){const sp=q.sr||q.spoken||[];script=`<div class="script">${q.listen.map(s=>`<div><span class="sp">${SPEAKER[s.s]||""}</span>${s.tr||s.t}</div>`).join("")}${sp.map((t,n)=>`<div><span class="sp">${n+1}</span>${t}</div>`).join("")}</div>`}
-      if(!q.listen&&(q.qr||q.cr)){yomi=`<div class="yomi"><span class="label">읽기</span><div class="yq">${q.qr||q.q}</div>${q.cr?`<ol>${q.cr.map(c=>`<li>${c}</li>`).join("")}</ol>`:""}</div>`}
-      else if(q.listen&&q.cr){yomi=`<div class="yomi"><span class="label">보기 읽기</span><ol>${q.cr.map(c=>`<li>${c}</li>`).join("")}</ol></div>`}
+      const KO=x=>x?`<span class="ko">${x}</span>`:"";
+      const chs=()=>`<ol>${(q.cr||q.choices).map((c,n)=>`<li>${c}${KO(q.cko&&q.cko[n])}</li>`).join("")}</ol>`;
+      if(q.listen){const sp=q.sr||q.spoken||[];script=`<div class="script">${q.listen.map(s=>`<div><span class="sp">${SPEAKER[s.s]||""}</span>${s.tr||s.t}${KO(s.ko)}</div>`).join("")}${sp.map((t,n)=>`<div><span class="sp">${n+1}</span>${t}${KO(q.sko&&q.sko[n])}</div>`).join("")}</div>`}
+      if(!q.listen&&(q.qr||q.cr||q.qko||q.cko)){yomi=`<div class="yomi"><span class="label">읽기 · 번역</span><div class="yq">${q.qr||q.q}${KO(q.qko)}</div>${(q.cr||q.cko)?chs():""}</div>`}
+      else if(q.listen&&(q.cr||q.cko||q.qko)){yomi=`<div class="yomi"><span class="label">질문·보기 읽기 · 번역</span>${q.qko?`<div class="yq">${q.qr||q.q}${KO(q.qko)}</div>`:""}${(q.cr||q.cko)?chs():""}</div>`}
       fb.innerHTML=`<b>${ok?"정답":"오답 · 정답은 "+(q.a+1)+"번"}</b><span>${q.exr||q.ex}</span>${yomi}${script}`;
       $("qscore").textContent=`${right} / ${qs.length}`+(answered===qs.length?" · 다 풀었어요":"");
       $("wrongs").innerHTML=wrongs.length?wrongs.map(x=>`<li><b>${x.i}번</b> <span class="chip gray">${x.q.part}</span> ${x.q.ex}</li>`).join(""):'<li class="muted">아직 틀린 문제가 없어요.</li>';
